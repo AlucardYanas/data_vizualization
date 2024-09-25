@@ -22,6 +22,7 @@ export async function parseData(file: File): Promise<any[]> {
             return cleanedRow;
           });
           resolve(cleanedData);
+          console.log(cleanedData);
         },
         error: (err) => reject(err),
       });

@@ -7,6 +7,11 @@ interface ChartProps {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const StatusChart: React.FC<ChartProps> = ({ data }) => {
+  // Проверяем, что data является массивом
+  if (!data || data.length === 0) {
+    return <p>No data available</p>; // Выводим сообщение, если данных нет
+  }
+
   // Подготовка данных для графика
   const chartData = data.reduce((acc: any, item) => {
     const status = item['Status'] || 'Unknown';

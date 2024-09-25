@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDataStore } from '../store/dataStore';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface EditableTableProps {
   data: any[];
@@ -7,6 +8,8 @@ interface EditableTableProps {
 
 const EditableTable: React.FC<EditableTableProps> = () => {
   const { data, setData } = useDataStore();
+
+  console.log(data)
 
   // Обработчик изменения значения в ячейке
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, rowIndex: number, key: string) => {
@@ -23,31 +26,31 @@ const EditableTable: React.FC<EditableTableProps> = () => {
   const headers = Object.keys(data[0]);
 
   return (
-    <table className="min-w-full bg-white">
-      <thead>
-        <tr>
+    <Table>
+      <TableHeader>
+        <TableRow>
           {headers.map((header) => (
-            <th key={header} className="px-4 py-2">{header}</th>
+            <TableHead key={header}>{header}</TableHead>
           ))}
-        </tr>
-      </thead>
-      <tbody>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {data.map((row, rowIndex) => (
-          <tr key={rowIndex}>
+          <TableRow key={rowIndex}>
             {headers.map((header) => (
-              <td key={header} className="border px-4 py-2">
+              <TableCell key={header}>
                 <input
                   type="text"
                   value={row[header]}
                   onChange={(e) => handleInputChange(e, rowIndex, header)}
-                  className="w-full"
+                  className="w-full border p-2"
                 />
-              </td>
+              </TableCell>
             ))}
-          </tr>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 };
 

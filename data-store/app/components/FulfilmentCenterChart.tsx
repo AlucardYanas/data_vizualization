@@ -5,6 +5,11 @@ interface ChartProps {
 }
 
 const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
+  // Проверяем, что data является массивом
+  if (!data || data.length === 0) {
+    return <p>No data available</p>; // Выводим сообщение, если данных нет
+  }
+
   // Подготовка данных для графика
   const chartData = data.reduce((acc: any, item) => {
     const center = item['Fulfilment centr'] || 'Unknown';
@@ -13,7 +18,7 @@ const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
     return acc;
   }, {});
 
- 
+  // Форматирование данных для recharts
   const formattedData = Object.keys(chartData).map((key) => ({
     name: key,
     value: chartData[key],

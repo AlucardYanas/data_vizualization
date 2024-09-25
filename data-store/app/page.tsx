@@ -1,38 +1,46 @@
 'use client';
+
 import { useState } from 'react';
-import FileUpload from './components/FileUploadProps';
-import EditableTable from './components/EditableTable';
-import Stats from './components/Stats';
-import { parseData } from './utils/dataParcer';
+import Navbar from './components/NavBar';
+import TableCard from './components/TableCard';
+import ChartsCard from './components/ChartsCard';
 import { useDataStore } from './store/dataStore';
+import Stats from './components/Stats';
 
-import StatusChart from './components/StatusChart';
-import FulfillmentCenterChart from './components/FulfilmentCenterChart';
+const HomePage: React.FC = () => {
+  const { data, setData } = useDataStore();
+  const [loading, setLoading] = useState(false);
 
-export default function Home() {
-  const { setData, data } = useDataStore();
-  const [fileError, setFileError] = useState<string | null>(null);
-
-  const handleFileUpload = (file: File) => {
-    parseData(file)
-      .then(parsedData => {
-        setData(parsedData);
-        setFileError(null);
-      })
-      .catch(err => {
-        setFileError('Error parsing the file');
-      });
+  // Функция для обработки распарсенных данных
+  const handleFileUpload = (parsedData: any[]) => {
+    setLoading(true);
+    try {
+      setData(parsedData); // Обновляем состояние с распарсенными данными
+    } catch (error) {
+      console.error('Error setting data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Fulfillment Center Inventory</h1>
-      <FileUpload onFileUpload={handleFileUpload} />
-      {fileError && <p className="text-red-500">{fileError}</p>}
-      {data && <EditableTable data={data} />}
-      {data && <Stats data={data} />}
-      <StatusChart data={data}/>
-      <FulfillmentCenterChart data={data}/>
+    <div className="min-h-screen bg-gray-100">
+      {/* Панель навигации с загрузкой файла */}
+      <Navbar onFileUpload={handleFileUpload} />
+      <Stats  data={data} />
+
+      <div className="container mx-auto px-4">
+        {/* Показать индикатор загрузки */}
+        {loading && <p>Loading...</p>}
+
+        {/* Таблица с данными */}
+        {data.length > 0 && <TableCard />}
+
+        {/* Графики */}
+        {data.length > 0 && <ChartsCard />}
+      </div>
     </div>
   );
-}
+};
+
+export default HomePage;
