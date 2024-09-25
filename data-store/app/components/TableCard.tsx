@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import EditableTable from './EditableTable';
 
 const TableCard: React.FC = () => {
+
   return (
     <Card className="my-6 shadow-md">
       <CardHeader>

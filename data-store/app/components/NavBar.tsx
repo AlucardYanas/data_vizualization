@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { parseData } from '../utils/dataParcer'; // Импорт функции для парсинга данных
+import { ProductData } from "../types/dataTypes";
 
 interface NavbarProps {
-  onFileUpload: (parsedData: any[]) => void;
+  onFileUpload: (parsedData: ProductData[]) => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onFileUpload }) => {
@@ -11,8 +12,8 @@ const Navbar: React.FC<NavbarProps> = ({ onFileUpload }) => {
     const file = event.target.files?.[0];
     if (file) {
       try {
-        const parsedData = await parseData(file); // Используем функцию parseData
-        onFileUpload(parsedData); // Передаем распарсенные данные в HomePage через пропс
+        const parsedData = await parseData(file); 
+        onFileUpload(parsedData); 
       } catch (error) {
         console.error('Error parsing file:', error);
       }
@@ -33,7 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({ onFileUpload }) => {
                 <input
                   type="file"
                   accept=".csv,.xlsx"
-                  onChange={handleFileChange} // Обрабатываем загрузку файла
+                  onChange={handleFileChange} 
                   className="hidden"
                 />
               </label>

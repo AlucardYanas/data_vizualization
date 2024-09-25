@@ -1,24 +1,24 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { ProductData } from '../types/dataTypes';
 
 interface ChartProps {
-  data: any[];
+  data: ProductData[];
 }
 
 const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
-  // Проверяем, что data является массивом
   if (!data || data.length === 0) {
-    return <p>No data available</p>; // Выводим сообщение, если данных нет
+    return <p>No data available</p>; 
   }
 
-  // Подготовка данных для графика
-  const chartData = data.reduce((acc: any, item) => {
+  
+  const chartData = data.reduce<Record<string, number>>((acc, item) => {
     const center = item['Fulfilment centr'] || 'Unknown';
     if (!acc[center]) acc[center] = 0;
     acc[center] += Number(item['Qty']) || 0;
     return acc;
   }, {});
 
-  // Форматирование данных для recharts
+  
   const formattedData = Object.keys(chartData).map((key) => ({
     name: key,
     value: chartData[key],

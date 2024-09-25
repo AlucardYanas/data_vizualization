@@ -6,16 +6,17 @@ import TableCard from './components/TableCard';
 import ChartsCard from './components/ChartsCard';
 import { useDataStore } from './store/dataStore';
 import Stats from './components/Stats';
+import { ProductData } from './types/dataTypes';
 
 const HomePage: React.FC = () => {
   const { data, setData } = useDataStore();
   const [loading, setLoading] = useState(false);
 
-  // Функция для обработки распарсенных данных
-  const handleFileUpload = (parsedData: any[]) => {
+
+  const handleFileUpload = (parsedData: ProductData[]) => {
     setLoading(true);
     try {
-      setData(parsedData); // Обновляем состояние с распарсенными данными
+      setData(parsedData); 
     } catch (error) {
       console.error('Error setting data:', error);
     } finally {
@@ -25,18 +26,16 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Панель навигации с загрузкой файла */}
+
       <Navbar onFileUpload={handleFileUpload} />
       <Stats  data={data} />
 
       <div className="container mx-auto px-4">
-        {/* Показать индикатор загрузки */}
+
         {loading && <p>Loading...</p>}
 
-        {/* Таблица с данными */}
         {data.length > 0 && <TableCard />}
 
-        {/* Графики */}
         {data.length > 0 && <ChartsCard />}
       </div>
     </div>

@@ -1,5 +1,7 @@
+import { ProductData } from "../types/dataTypes";
+
 interface StatsProps {
-  data: any[];
+  data: ProductData[];
 }
 
 const Stats: React.FC<StatsProps> = ({ data }) => {

@@ -1,8 +1,9 @@
 import create from 'zustand';
+import { ProductData } from '../types/dataTypes'; 
 
 interface DataStore {
-  data: any[];
-  setData: (data: any[]) => void;
+  data: ProductData[];
+  setData: (data: ProductData[]) => void;
 }
 
 export const useDataStore = create<DataStore>((set) => ({
