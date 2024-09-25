@@ -5,6 +5,9 @@ import DataTable from './components/DataTable';
 import Stats from './components/Stats';
 import { parseData } from './utils/dataParcer';
 import { useDataStore } from './store/dataStore';
+import Chart from './components/Chart';
+import StatusChart from './components/StatusChart';
+import FulfillmentCenterChart from './components/FulfilmentCenterChart';
 
 export default function Home() {
   const { setData, data } = useDataStore();
@@ -28,6 +31,8 @@ export default function Home() {
       {fileError && <p className="text-red-500">{fileError}</p>}
       {data && <DataTable data={data} />}
       {data && <Stats data={data} />}
+      <StatusChart data={data}/>
+      <FulfillmentCenterChart data={data}/>
     </div>
   );
 }
