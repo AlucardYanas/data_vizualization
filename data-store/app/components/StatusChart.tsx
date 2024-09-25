@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import type { ProductData } from '../types/dataTypes';
+import { memo, useMemo } from "react";
 
 interface ChartProps {
   data: ProductData[];
@@ -8,24 +9,24 @@ interface ChartProps {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const StatusChart: React.FC<ChartProps> = ({ data }) => {
-  
+  // Мемоизируем данные для графика
+  const formattedData = useMemo(() => {
+    const chartData = data.reduce<Record<string, number>>((acc, item) => {
+      const status = item['Status'] || 'Unknown';
+      if (!acc[status]) acc[status] = 0;
+      acc[status] += Number(item['Qty']) || 0;
+      return acc;
+    }, {});
+
+    return Object.keys(chartData).map((key) => ({
+      name: key,
+      value: chartData[key],
+    }));
+  }, [data]);
+
   if (!data || data.length === 0) {
-    return <p>No data available</p>; 
+    return <p>No data available</p>;
   }
-
-
-  const chartData = data.reduce<Record<string, number>>((acc, item) => {
-    const status = item['Status'] || 'Unknown';
-    if (!acc[status]) acc[status] = 0;
-    acc[status] += Number(item['Qty']) || 0;
-    return acc;
-  }, {});
-
-
-  const formattedData = Object.keys(chartData).map((key) => ({
-    name: key,
-    value: chartData[key],
-  }));
 
   return (
     <div className="my-4">
@@ -52,4 +53,4 @@ const StatusChart: React.FC<ChartProps> = ({ data }) => {
   );
 };
 
-export default StatusChart;
+export default memo(StatusChart);

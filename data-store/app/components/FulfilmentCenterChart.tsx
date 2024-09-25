@@ -1,28 +1,30 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import { ProductData } from '../types/dataTypes';
+import { memo, useMemo } from "react";
 
 interface ChartProps {
   data: ProductData[];
 }
 
 const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
+
+  const formattedData = useMemo(() => {
+    const chartData = data.reduce<Record<string, number>>((acc, item) => {
+      const center = item['Fulfilment centr'] || 'Unknown';
+      if (!acc[center]) acc[center] = 0;
+      acc[center] += Number(item['Qty']) || 0;
+      return acc;
+    }, {});
+
+    return Object.keys(chartData).map((key) => ({
+      name: key,
+      value: chartData[key],
+    }));
+  }, [data]);
+
   if (!data || data.length === 0) {
-    return <p>No data available</p>; 
+    return <p>No data available</p>;
   }
-
-  
-  const chartData = data.reduce<Record<string, number>>((acc, item) => {
-    const center = item['Fulfilment centr'] || 'Unknown';
-    if (!acc[center]) acc[center] = 0;
-    acc[center] += Number(item['Qty']) || 0;
-    return acc;
-  }, {});
-
-  
-  const formattedData = Object.keys(chartData).map((key) => ({
-    name: key,
-    value: chartData[key],
-  }));
 
   return (
     <div className="my-4">
@@ -39,4 +41,4 @@ const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
   );
 };
 
-export default FulfillmentCenterChart;
+export default memo(FulfillmentCenterChart);

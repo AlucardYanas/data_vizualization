@@ -1,12 +1,14 @@
 import React from 'react';
-import { useDataStore } from '../store/dataStore';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ProductData } from '../types/dataTypes';
+import { memo } from 'react';
 
-const EditableTable: React.FC = () => {
-  const { data, setData } = useDataStore();
+interface EditableTableProps {
+  data: ProductData[];
+  setData: (data: ProductData[]) => void; // Добавляем setData для обновления данных
+}
 
-  
+const EditableTable: React.FC<EditableTableProps> = ({ data, setData }) => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, rowIndex: number, key: keyof ProductData) => {
     const newData = [...data];
     newData[rowIndex] = {
@@ -36,8 +38,8 @@ const EditableTable: React.FC = () => {
               <TableCell key={header}>
                 <input
                   type="text"
-                  value={row[header] as string | number} 
-                  onChange={(e) => handleInputChange(e, rowIndex, header)} 
+                  value={row[header] as string | number}
+                  onChange={(e) => handleInputChange(e, rowIndex, header)}
                   className="w-full border p-2"
                 />
               </TableCell>
@@ -49,4 +51,4 @@ const EditableTable: React.FC = () => {
   );
 };
 
-export default EditableTable;
+export default memo(EditableTable);
