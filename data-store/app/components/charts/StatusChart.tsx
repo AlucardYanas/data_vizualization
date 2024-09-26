@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import type { ProductData } from '../types/dataTypes';
+import type { ProductData } from '../../types/dataTypes';
 
 interface ChartProps {
   data: ProductData[];
@@ -8,11 +8,9 @@ interface ChartProps {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const StatusChart: React.FC<ChartProps> = ({ data }) => {
-  
   if (!data || data.length === 0) {
-    return <p>No data available</p>; 
+    return <p>No data available</p>;
   }
-
 
   const chartData = data.reduce<Record<string, number>>((acc, item) => {
     const status = item['Status'] || 'Unknown';
@@ -20,7 +18,6 @@ const StatusChart: React.FC<ChartProps> = ({ data }) => {
     acc[status] += Number(item['Qty']) || 0;
     return acc;
   }, {});
-
 
   const formattedData = Object.keys(chartData).map((key) => ({
     name: key,

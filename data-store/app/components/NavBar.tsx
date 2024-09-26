@@ -21,14 +21,14 @@ const Navbar: React.FC<NavbarProps> = ({ onFileUpload }) => {
   };
 
   return (
-    <div className="bg-gray-900 text-white py-4">
+    <div className="bg-gray-900 text-white py-4 gap-10">
       <NavigationMenu>
-        <NavigationMenuList>
+        <NavigationMenuList className="gap-10">
           <NavigationMenuItem>
             <span className="text-2xl font-bold ml-6">Inventory Dashboard</span>
           </NavigationMenuItem>
           <NavigationMenuItem className="ml-auto mr-6">
-            <Button>
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold">
               <label>
                 Upload File
                 <input

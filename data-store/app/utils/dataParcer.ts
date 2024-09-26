@@ -1,44 +1,57 @@
-import Papa from 'papaparse';
+import { parse } from 'csv-parse/browser/esm'; // Используем версию для браузера
 import { read, utils } from 'xlsx';
 import { ProductData } from '../types/dataTypes';
 
 export async function parseData(file: File): Promise<ProductData[]> {
   return new Promise((resolve, reject) => {
-    const fileExtension = file.name.split('.').pop();
+    const MAX_FILE_SIZE_MB = 5; 
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; 
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      reject(new Error(`File size exceeds ${MAX_FILE_SIZE_MB} MB limit.`));
+      return;
+    }
+
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
     if (fileExtension === 'csv') {
-      Papa.parse<Record<string, unknown>>(file, {
-        header: true,
-        complete: (result) => {
-          const cleanedData = result.data.map((row) => {
-            const cleanedRow: Partial<ProductData> = {}; // Частично типизированный объект
+      const reader = new FileReader();
 
-            for (const key in row) {
-              if (Object.prototype.hasOwnProperty.call(row, key)) {
-                const cleanKey = key.trim() as keyof ProductData; // Приводим ключ к типу ProductData
-                let value = row[key];
+      reader.onload = (event) => {
+        let csvData = event.target?.result as string;
 
-                // Приводим значение к допустимым типам для ProductData
-                if (typeof value === 'string') {
-                  value = value.trim(); // Убираем пробелы в строках
-                } else if (typeof value === 'number') {
-                  value = Number(value); // Обрабатываем числа
-                } else {
-                  value = undefined; // Если значение не string и не number, делаем его undefined
-                }
+        const csvLines = csvData.split('\n');
+        const filteredLines = csvLines.filter((line) => {
+          const columns = line.split(',');
+          return columns.some(column => column.trim() !== '');
+        });
 
-                if (value !== undefined) {
-                  cleanedRow[cleanKey] = value as ProductData[keyof ProductData] ?? undefined;
-                }
-              }
-            }
+        const processedLines = filteredLines.map((line) => {
+          const columns = line.split(',');
+          if (columns.length > 1) {
+            columns.splice(0, 1);
+          }
+          return columns.join(','); 
+        });
 
-            return cleanedRow as ProductData; // Приводим к полному типу ProductData
-          });
-          resolve(cleanedData);
-        },
-        error: (err) => reject(err),
-      });
+        csvData = processedLines.join('\n'); 
+
+        parse(csvData, {
+          columns: true, 
+          skip_empty_lines: true,
+          trim: true, 
+        }, (err, records: ProductData[]) => {
+          if (err) {
+            reject(err); 
+          } else {
+            resolve(records); 
+          }
+        });
+      };
+
+      reader.onerror = () => reject(new Error('Error reading CSV file.'));
+      reader.readAsText(file);
+
     } else if (fileExtension === 'xlsx') {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -46,13 +59,13 @@ export async function parseData(file: File): Promise<ProductData[]> {
         const workbook = read(data, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const jsonData = utils.sheet_to_json<ProductData>(sheet); // Приводим результат к ProductData
-        resolve(jsonData);
+        const jsonData = utils.sheet_to_json<ProductData>(sheet);
+        resolve(jsonData); 
       };
-      reader.onerror = (err) => reject(err);
+      reader.onerror = () => reject(new Error('Error reading XLSX file.'));
       reader.readAsArrayBuffer(file);
     } else {
-      reject(new Error('Unsupported file type'));
+      reject(new Error('Unsupported file type.'));
     }
   });
 }

@@ -1,4 +1,4 @@
-import { ProductData } from "../types/dataTypes";
+import { ProductData } from '../../types/dataTypes';
 
 interface StatsProps {
   data: ProductData[];
@@ -17,11 +17,17 @@ const Stats: React.FC<StatsProps> = ({ data }) => {
     }, 0) / data.length
   ).toFixed(2);
 
+  const totalValue = data.reduce((acc, item) => {
+    const value = Number(item['Value']);
+    return acc + (isNaN(value) ? 0 : value);
+  }, 0);
+
   return (
     <div className="my-4">
       <h2 className="text-xl font-bold">Summary</h2>
-      <p>Total Items: {totalItems}</p>
-      <p>Average Price: {isNaN(Number(avgPrice)) ? "N/A" : avgPrice}</p>
+      <p>Total Items (Qty): {totalItems}</p>
+      <p>Average Price: {isNaN(Number(avgPrice)) ? 'N/A' : avgPrice}</p>
+      <p>Total Inventory Value: {totalValue}</p>
     </div>
   );
 };

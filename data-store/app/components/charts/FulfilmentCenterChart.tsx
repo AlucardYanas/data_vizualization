@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
-import { ProductData } from '../types/dataTypes';
+import { ProductData } from '../../types/dataTypes';
 
 interface ChartProps {
   data: ProductData[];
@@ -7,10 +7,9 @@ interface ChartProps {
 
 const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
-    return <p>No data available</p>; 
+    return <p>No data available</p>;
   }
 
-  
   const chartData = data.reduce<Record<string, number>>((acc, item) => {
     const center = item['Fulfilment centr'] || 'Unknown';
     if (!acc[center]) acc[center] = 0;
@@ -18,7 +17,6 @@ const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
     return acc;
   }, {});
 
-  
   const formattedData = Object.keys(chartData).map((key) => ({
     name: key,
     value: chartData[key],
