@@ -1,6 +1,6 @@
-import { parse } from 'csv-parse/browser/esm'; // Используем версию для браузера
+import { parse } from 'csv-parse/browser/esm'; 
 import { read, utils } from 'xlsx';
-import { ProductData } from '../types/dataTypes';
+import { ProductData } from './dataTypes';
 
 export async function parseData(file: File): Promise<ProductData[]> {
   return new Promise((resolve, reject) => {

@@ -1,11 +1,11 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
-import { ProductData } from '../../types/dataTypes';
+import { ProductData } from '../../dataTypes';
 
 interface ChartProps {
   data: ProductData[];
 }
 
-const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
+const FulfillmentCenter: React.FC<ChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
     return <p>No data available</p>;
   }
@@ -37,4 +37,4 @@ const FulfillmentCenterChart: React.FC<ChartProps> = ({ data }) => {
   );
 };
 
-export default FulfillmentCenterChart;
+export default FulfillmentCenter;

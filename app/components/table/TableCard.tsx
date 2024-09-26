@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/card';
 import EditableTable from './EditableTable';
 
 const TableCard: React.FC = () => {

@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import type { ProductData } from '../../types/dataTypes';
+import type { ProductData } from '../../dataTypes';
 
 interface ChartProps {
   data: ProductData[];
@@ -7,7 +7,7 @@ interface ChartProps {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-const StatusChart: React.FC<ChartProps> = ({ data }) => {
+const Status: React.FC<ChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
     return <p>No data available</p>;
   }
@@ -49,4 +49,4 @@ const StatusChart: React.FC<ChartProps> = ({ data }) => {
   );
 };
 
-export default StatusChart;
+export default Status;

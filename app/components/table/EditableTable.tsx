@@ -1,14 +1,7 @@
 import React from 'react';
-import { useDataStore } from '../../store/dataStore';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { ProductData } from '../../types/dataTypes';
+import { useDataStore } from '../../dataStore';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
+import { ProductData } from '../../dataTypes';
 
 const EditableTable: React.FC = () => {
   const { data, setData } = useDataStore();

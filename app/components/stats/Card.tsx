@@ -1,5 +1,5 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { useDataStore } from '../../store/dataStore';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/card';
+import { useDataStore } from '../../dataStore';
 import Stats from './Stats';
 
 const StatsCard: React.FC = () => {

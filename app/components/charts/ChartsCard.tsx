@@ -1,7 +1,7 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import StatusChart from './StatusChart';
-import FulfillmentCenterChart from './FulfilmentCenterChart';
-import { useDataStore } from '../../store/dataStore';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/card';
+import Status from './Status';
+import FulfillmentCenter from './FulfilmentCenterChart';
+import { useDataStore } from '../../dataStore';
 
 const ChartsCard: React.FC = () => {
   const { data } = useDataStore();
@@ -11,8 +11,8 @@ const ChartsCard: React.FC = () => {
         <CardTitle className="text-xl">Inventory Charts</CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-0">
-        <StatusChart data={data} />
-        <FulfillmentCenterChart data={data} />
+        <Status data={data} />
+        <FulfillmentCenter data={data} />
       </CardContent>
     </Card>
   );

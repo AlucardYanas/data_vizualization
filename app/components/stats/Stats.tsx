@@ -1,4 +1,4 @@
-import { ProductData } from '../../types/dataTypes';
+import { ProductData } from '../../dataTypes';
 
 interface StatsProps {
   data: ProductData[];
