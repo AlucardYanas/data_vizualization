@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { ProductData } from '../dataTypes';
+import { ProductData } from './dataTypes';
 
 interface DataStore {
   data: ProductData[];
