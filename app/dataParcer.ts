@@ -1,29 +1,31 @@
 import { parse } from 'csv-parse/browser/esm';
 import { read, utils } from 'xlsx';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import { ProductData } from './dataTypes';
 
-// Функция для определения разделителей строк и колонок
 function detectDelimiters(data: string) {
-  const lineDelimiters = ['\r\n', '\n', '\r']; // Возможные разделители строк
-  const columnDelimiters = [',', ';', '\t', '|']; // Возможные разделители колонок
-
-  // Определяем наиболее часто используемый разделитель строк
+  const lineDelimiters = ['\r\n', '\n', '\r'];
+  const columnDelimiters = [',', ';', '\t', '|'];
   const lineDelimiter = lineDelimiters.find((d) => data.includes(d)) || '\n';
-
-  // Используем первую строку для определения разделителя колонок
   const firstLine = data.split(lineDelimiter)[0];
   const columnDelimiter = columnDelimiters.find((d) => firstLine.includes(d)) || ',';
-
   return { lineDelimiter, columnDelimiter };
+}
+
+function isValidData<T extends object>(data: T[]): boolean {
+  return Array.isArray(data) && data.length > 0 && Object.keys(data[0]).length > 0;
 }
 
 export async function parseData(file: File): Promise<ProductData[]> {
   return new Promise((resolve, reject) => {
-    const MAX_FILE_SIZE_MB = 5; 
-    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; 
+    const MAX_FILE_SIZE_MB = 5;
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      reject(new Error(`File size exceeds ${MAX_FILE_SIZE_MB} MB limit.`));
+      const errorMessage = `File size exceeds ${MAX_FILE_SIZE_MB} MB limit.`;
+      toast.error(errorMessage);
+      reject(new Error(errorMessage));
       return;
     }
 
@@ -31,52 +33,51 @@ export async function parseData(file: File): Promise<ProductData[]> {
 
     if (fileExtension === 'csv') {
       const reader = new FileReader();
-
       reader.onload = (event) => {
         let csvData = event.target?.result as string;
-
-        // 1. Определяем разделители строк и колонок
         const { lineDelimiter, columnDelimiter } = detectDelimiters(csvData);
-
-        // 2. Разделяем на строки и очищаем пустые строки
-        const csvLines = csvData.split(lineDelimiter); // Разделение по определенному разделителю строк
+        const csvLines = csvData.split(lineDelimiter);
         const filteredLines = csvLines.filter((line) => {
-          const columns = line.split(columnDelimiter); // Разделяем строку на колонки
-          return columns.some((column) => column.trim() !== ''); // Оставляем только непустые строки
+          const columns = line.split(columnDelimiter);
+          return columns.some((column) => column.trim() !== '');
         });
 
-        // 3. Обрабатываем строки: удаление первой колонки и сохранение текущего функционала
         const processedLines = filteredLines.map((line) => {
           const columns = line.split(columnDelimiter);
           if (columns.length > 1) {
-            columns.splice(0, 1); // Удаляем первую колонку
+            columns.splice(0, 1);
           }
-          return columns.join(columnDelimiter); // Собираем строку обратно с исходным разделителем колонок
+          return columns.join(columnDelimiter);
         });
 
-        // 4. Применяем заголовок как первую строку и собираем данные обратно в CSV формат
-        csvData = processedLines.join(lineDelimiter); // Собираем все строки обратно в одну строку CSV
+        csvData = processedLines.join(lineDelimiter);
 
-        // 5. Парсинг CSV данных с использованием определенных разделителей
         parse(
           csvData,
           {
-            columns: true, // Используем первую строку как заголовки
-            skip_empty_lines: true, // Пропускаем пустые строки
-            trim: true, // Убираем лишние пробелы
-            delimiter: columnDelimiter, // Устанавливаем найденный разделитель колонок
+            columns: true,
+            skip_empty_lines: true,
+            trim: true,
+            delimiter: columnDelimiter,
           },
           (err, records: ProductData[]) => {
             if (err) {
-              reject(err); // Ошибка парсинга
+              toast.error('Error parsing CSV file.');
+              reject(err);
+            } else if (!isValidData(records)) {
+              toast.error('Parsed CSV file is empty or contains no valid data.');
+              reject(new Error('Parsed CSV file is empty or contains no valid data.'));
             } else {
-              resolve(records); // Успешный результат парсинга
+              resolve(records);
             }
           }
         );
       };
 
-      reader.onerror = () => reject(new Error('Error reading CSV file.'));
+      reader.onerror = () => {
+        toast.error('Error reading CSV file.');
+        reject(new Error('Error reading CSV file.'));
+      };
       reader.readAsText(file);
 
     } else if (fileExtension === 'xlsx') {
@@ -87,12 +88,23 @@ export async function parseData(file: File): Promise<ProductData[]> {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData = utils.sheet_to_json<ProductData>(sheet);
-        resolve(jsonData); 
+
+        if (!isValidData(jsonData)) {
+          toast.error('Parsed XLSX file is empty or contains no valid data.');
+          reject(new Error('Parsed XLSX file is empty or contains no valid data.'));
+        } else {
+          resolve(jsonData);
+        }
       };
-      reader.onerror = () => reject(new Error('Error reading XLSX file.'));
+      reader.onerror = () => {
+        toast.error('Error reading XLSX file.');
+        reject(new Error('Error reading XLSX file.'));
+      };
       reader.readAsArrayBuffer(file);
     } else {
-      reject(new Error('Unsupported file type.'));
+      const errorMessage = 'Unsupported file type.';
+      toast.error(errorMessage);
+      reject(new Error(errorMessage));
     }
   });
 }

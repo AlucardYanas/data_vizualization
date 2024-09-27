@@ -5,7 +5,6 @@ import { ProductData } from '../../dataTypes';
 
 const EditableTable: React.FC = () => {
   const { data, setData } = useDataStore();
-  console.log(data);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
