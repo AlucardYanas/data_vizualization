@@ -1,4 +1,5 @@
-import {create} from 'zustand';
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { ProductData } from './dataTypes';
 
 interface DataStore {
@@ -6,7 +7,15 @@ interface DataStore {
   setData: (data: ProductData[]) => void;
 }
 
-export const useDataStore = create<DataStore>((set) => ({
-  data: [],
-  setData: (data) => set({ data }),
-}));
+export const useDataStore = create<DataStore>()(
+  persist(
+    (set) => ({
+      data: [],
+      setData: (data) => set({ data }),
+    }),
+    {
+      name: 'inventory-data', 
+      storage: createJSONStorage(() => localStorage), 
+    }
+  )
+);

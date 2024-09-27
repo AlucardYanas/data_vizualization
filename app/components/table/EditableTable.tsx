@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDataStore } from '../../dataStore';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { ProductData } from '../../dataTypes';

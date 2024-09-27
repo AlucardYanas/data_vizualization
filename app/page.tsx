@@ -4,9 +4,10 @@ import { useState } from 'react';
 import Navbar from './components/NavBar';
 import TableCard from './components/table/TableCard';
 import ChartsCard from './components/charts/ChartsCard';
+import StatsCard from './components/stats/Card';
 import { useDataStore } from './dataStore';
 import { ProductData } from './dataTypes';
-import StatsCard from './components/stats/Card';
+
 
 const HomePage: React.FC = () => {
   const { data, setData } = useDataStore();
